@@ -10,12 +10,20 @@ RUN wget -q https://github.com/rhasspy/piper/releases/download/2023.11.14-2/pipe
     && rm piper_linux_x86_64.tar.gz \
     && ln -s /usr/local/piper/piper /usr/local/bin/piper
 
-# Download voice model
+# Download voice models (selectable at runtime via the settings UI)
 RUN mkdir -p /models \
     && wget -q -O /models/en_US-lessac-medium.onnx \
        "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx" \
     && wget -q -O /models/en_US-lessac-medium.onnx.json \
-       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json"
+       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json" \
+    && wget -q -O /models/en_US-amy-medium.onnx \
+       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx" \
+    && wget -q -O /models/en_US-amy-medium.onnx.json \
+       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx.json" \
+    && wget -q -O /models/en_GB-alan-medium.onnx \
+       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alan/medium/en_GB-alan-medium.onnx" \
+    && wget -q -O /models/en_GB-alan-medium.onnx.json \
+       "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alan/medium/en_GB-alan-medium.onnx.json"
 
 WORKDIR /app
 

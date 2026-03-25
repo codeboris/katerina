@@ -16,6 +16,7 @@ func NewRouter(
 	authUC *usecases.AuthUseCase,
 	processUC *usecases.ProcessVoiceUseCase,
 	audioUC *usecases.AudioUseCase,
+	settingsUC *usecases.SettingsUseCase,
 ) *chi.Mux {
 	r := chi.NewRouter()
 
@@ -29,8 +30,9 @@ func NewRouter(
 	}))
 
 	authHandler := handlers.NewAuthHandler(authUC)
-	voiceHandler := handlers.NewVoiceHandler(processUC)
+	voiceHandler := handlers.NewVoiceHandler(processUC, settingsUC)
 	audioHandler := handlers.NewAudioHandler(audioUC)
+	settingsHandler := handlers.NewSettingsHandler(settingsUC)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -40,10 +42,14 @@ func NewRouter(
 		r.Post("/auth/login", authHandler.Login)
 		r.Post("/auth/refresh", authHandler.Refresh)
 
+		r.Get("/audio/{id}", audioHandler.GetAudio)
+		r.Get("/voices", settingsHandler.GetVoices)
+
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(authUC))
 			r.Post("/voice/process", voiceHandler.Process)
-			r.Get("/audio/{id}", audioHandler.GetAudio)
+			r.Get("/user/settings", settingsHandler.GetSettings)
+			r.Put("/user/settings", settingsHandler.UpdateSettings)
 		})
 	})
 

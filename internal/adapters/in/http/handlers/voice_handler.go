@@ -9,11 +9,12 @@ import (
 )
 
 type VoiceHandler struct {
-	processUC *usecases.ProcessVoiceUseCase
+	processUC  *usecases.ProcessVoiceUseCase
+	settingsUC *usecases.SettingsUseCase
 }
 
-func NewVoiceHandler(processUC *usecases.ProcessVoiceUseCase) *VoiceHandler {
-	return &VoiceHandler{processUC: processUC}
+func NewVoiceHandler(processUC *usecases.ProcessVoiceUseCase, settingsUC *usecases.SettingsUseCase) *VoiceHandler {
+	return &VoiceHandler{processUC: processUC, settingsUC: settingsUC}
 }
 
 func (h *VoiceHandler) Process(w http.ResponseWriter, r *http.Request) {
@@ -37,10 +38,17 @@ func (h *VoiceHandler) Process(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	settings, err := h.settingsUC.GetSettings(r.Context(), userID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "get settings failed")
+		return
+	}
+
 	out, err := h.processUC.Execute(r.Context(), usecases.ProcessVoiceInput{
 		UserID:    userID,
 		AudioData: audioData,
 		MimeType:  header.Header.Get("Content-Type"),
+		Voice:     settings.Voice,
 	})
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "processing failed: "+err.Error())

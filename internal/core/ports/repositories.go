@@ -11,7 +11,9 @@ import (
 
 type UserRepository interface {
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*model.User, error)
 	Save(ctx context.Context, user *model.User) error
+	UpdateVoicePreference(ctx context.Context, userID uuid.UUID, voice string) error
 }
 
 type ConversationRepository interface {

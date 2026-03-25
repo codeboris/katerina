@@ -13,12 +13,18 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Piper TTS Service")
 
-MODEL_PATH   = os.getenv("PIPER_MODEL",        "/models/en_US-lessac-medium.onnx")
-MODEL_CONFIG = os.getenv("PIPER_MODEL_CONFIG", "/models/en_US-lessac-medium.onnx.json")
+DEFAULT_VOICE = os.getenv("PIPER_DEFAULT_VOICE", "en_US-lessac-medium")
+
+AVAILABLE_VOICES = {
+    "en_US-lessac-medium": "/models/en_US-lessac-medium.onnx",
+    "en_US-amy-medium":    "/models/en_US-amy-medium.onnx",
+    "en_GB-alan-medium":   "/models/en_GB-alan-medium.onnx",
+}
 
 
 class SynthesizeRequest(BaseModel):
-    text: str
+    text:  str
+    voice: str = DEFAULT_VOICE
 
 
 @app.get("/health")
@@ -31,12 +37,15 @@ async def synthesize(req: SynthesizeRequest):
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="text is required")
 
+    model_path = AVAILABLE_VOICES.get(req.voice, AVAILABLE_VOICES[DEFAULT_VOICE])
+    config_path = model_path + ".json"
+
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
         tmp_path = tmp.name
 
     try:
         result = subprocess.run(
-            ["piper", "--model", MODEL_PATH, "--config", MODEL_CONFIG, "--output_file", tmp_path],
+            ["piper", "--model", model_path, "--config", config_path, "--output_file", tmp_path],
             input=req.text.encode(),
             capture_output=True,
             timeout=30,

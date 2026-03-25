@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS users (
@@ -18,7 +19,7 @@ CREATE TABLE IF NOT EXISTS conversations (
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_conversations_user_id ON conversations(user_id);
+CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
 
 CREATE TABLE IF NOT EXISTS audio_files (
     id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -28,4 +29,9 @@ CREATE TABLE IF NOT EXISTS audio_files (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_audio_files_user_id ON audio_files(user_id);
+CREATE INDEX IF NOT EXISTS idx_audio_files_user_id ON audio_files(user_id);
+
+-- +goose Down
+DROP TABLE IF EXISTS audio_files;
+DROP TABLE IF EXISTS conversations;
+DROP TABLE IF EXISTS users;

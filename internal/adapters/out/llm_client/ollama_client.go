@@ -18,7 +18,7 @@ Return ONLY valid JSON — no markdown, no extra text:
 {
   "corrected": "<grammatically corrected English>",
   "translation": "<Russian translation of the corrected text>",
-  "answer": "<natural, friendly English teacher response>"
+  "answer": "<friendly teacher response, 1-2 sentences max>"
 }`
 
 type OllamaClient struct {
@@ -43,6 +43,7 @@ type ollamaRequest struct {
 	Model   string        `json:"model"`
 	Prompt  string        `json:"prompt"`
 	Stream  bool          `json:"stream"`
+	Format  string        `json:"format"`
 	Options ollamaOptions `json:"options"`
 }
 
@@ -53,7 +54,7 @@ type ollamaResponse struct {
 func (c *OllamaClient) Process(ctx context.Context, text string) (*ports.LLMResponse, error) {
 	prompt := systemPrompt + "\n\nUser text: " + text
 
-	body, _ := json.Marshal(ollamaRequest{Model: c.model, Prompt: prompt, Stream: false, Options: ollamaOptions{NumPredict: 512}})
+	body, _ := json.Marshal(ollamaRequest{Model: c.model, Prompt: prompt, Stream: false, Format: "json", Options: ollamaOptions{NumPredict: 1024}})
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/api/generate", bytes.NewReader(body))
 	if err != nil {

@@ -29,11 +29,12 @@ func NewPiperClient(baseURL, audioStorage string) *PiperClient {
 }
 
 type ttsRequest struct {
-	Text string `json:"text"`
+	Text  string `json:"text"`
+	Voice string `json:"voice"`
 }
 
-func (c *PiperClient) Synthesize(ctx context.Context, text string) (string, error) {
-	body, _ := json.Marshal(ttsRequest{Text: text})
+func (c *PiperClient) Synthesize(ctx context.Context, text, voice string) (string, error) {
+	body, _ := json.Marshal(ttsRequest{Text: text, Voice: voice})
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/synthesize", bytes.NewReader(body))
 	if err != nil {

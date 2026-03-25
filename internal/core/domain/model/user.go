@@ -7,8 +7,9 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID
-	Email        string
-	PasswordHash string
-	CreatedAt    time.Time
+	ID              uuid.UUID
+	Email           string
+	PasswordHash    string
+	VoicePreference string
+	CreatedAt       time.Time
 }

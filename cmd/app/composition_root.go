@@ -61,6 +61,7 @@ func NewApp(cfg *Config) (*App, error) {
 	})
 	processUC := usecases.NewProcessVoiceUseCase(sttClient, llmClient, ttsClient, convRepo, audioRepo, cfg.Storage.AudioPath)
 	audioUC := usecases.NewAudioUseCase(audioRepo)
+	settingsUC := usecases.NewSettingsUseCase(userRepo)
 
 	// Seed demo user
 	if err := authUC.SeedMockUser(context.Background()); err != nil {
@@ -68,7 +69,7 @@ func NewApp(cfg *Config) (*App, error) {
 	}
 
 	// ── HTTP Router ───────────────────────────────────────────────────────────
-	router := httpserver.NewRouter(authUC, processUC, audioUC)
+	router := httpserver.NewRouter(authUC, processUC, audioUC, settingsUC)
 
 	return &App{router: router, cfg: cfg}, nil
 }

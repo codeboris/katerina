@@ -59,6 +59,8 @@ services:
       POSTGRES_DB:       katerina
       POSTGRES_USER:     katerina
       POSTGRES_PASSWORD: katerina
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./migrations:/docker-entrypoint-initdb.d

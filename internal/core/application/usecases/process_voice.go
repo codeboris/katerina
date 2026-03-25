@@ -18,6 +18,7 @@ type ProcessVoiceInput struct {
 	UserID    uuid.UUID
 	AudioData []byte
 	MimeType  string
+	Voice     string
 }
 
 type ProcessVoiceOutput struct {
@@ -87,7 +88,11 @@ func (uc *ProcessVoiceUseCase) Execute(ctx context.Context, input ProcessVoiceIn
 	}
 
 	// 5. Text-to-speech for the AI answer
-	ttsPath, err := uc.tts.Synthesize(ctx, llmResp.Answer)
+	voice := input.Voice
+	if voice == "" {
+		voice = "en_US-lessac-medium"
+	}
+	ttsPath, err := uc.tts.Synthesize(ctx, llmResp.Answer, voice)
 	if err != nil {
 		return nil, fmt.Errorf("tts synthesize: %w", err)
 	}

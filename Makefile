@@ -1,4 +1,8 @@
-.PHONY: up down build rebuild logs restart clean setup pull-model tidy
+DB_DSN ?= postgres://katerina:katerina@localhost:5432/katerina?sslmode=disable
+MIGRATE = go run ./cmd/migrate -dsn "$(DB_DSN)" -dir migrations
+
+.PHONY: up down build rebuild logs restart clean setup pull-model tidy \
+        migrate migrate-down migrate-reset migrate-status migrate-create
 
 ## Start all services (detached)
 up:
@@ -44,3 +48,23 @@ pull-model:
 ## Download Go dependencies (run once locally)
 tidy:
 	go mod tidy
+
+## Apply all pending migrations
+migrate:
+	$(MIGRATE) up
+
+## Roll back the last migration
+migrate-down:
+	$(MIGRATE) down
+
+## Roll back all migrations
+migrate-reset:
+	$(MIGRATE) reset
+
+## Show migration status
+migrate-status:
+	$(MIGRATE) status
+
+## Create a new migration: make migrate-create name=add_something
+migrate-create:
+	$(MIGRATE) create $(name)
