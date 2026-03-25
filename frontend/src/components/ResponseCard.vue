@@ -12,13 +12,12 @@
     </div>
 
     <div class="border-t dark:border-gray-700 pt-4">
-      <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">{{ $t('response.section.aiResponse') }}</p>
+      <div class="flex items-center gap-3 mb-2">
+        <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-2">{{ $t('response.section.aiResponse') }}</p>
+        <AudioPlayer v-if="result.audio_url" :src="result.audio_url" :autoplay="true" />
+      </div>
       <p class="text-gray-800 dark:text-gray-100">{{ result.answer }}</p>
       <p v-if="result.answer_translation" class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ result.answer_translation }}</p>
-    </div>
-
-    <div v-if="result.audio_url" class="border-t dark:border-gray-700 pt-4">
-      <AudioPlayer :src="result.audio_url" :autoplay="true" />
     </div>
   </div>
 </template>

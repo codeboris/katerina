@@ -15,8 +15,7 @@
         <polygon points="5,3 19,12 5,21"/>
       </svg>
     </button>
-    <span class="text-sm text-gray-500 dark:text-gray-400">{{ playing ? $t('audio.status.playing') : $t('audio.status.idle') }}</span>
-    <audio ref="audioEl" :src="src" @ended="playing = false" @canplaythrough="onCanPlay" />
+<audio ref="audioEl" :src="src" @ended="playing = false" @canplaythrough="onCanPlay" />
   </div>
 </template>
 
