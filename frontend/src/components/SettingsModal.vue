@@ -1,24 +1,24 @@
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+    class="fixed inset-x-0 bottom-0 sm:inset-0 z-50 flex sm:items-center sm:justify-center bg-black/40"
     @click.self="$emit('close')"
   >
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5">
+    <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-sm sm:mx-4 p-6 space-y-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-bold text-gray-800">Settings</h2>
-        <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Settings</h2>
+        <button @click="$emit('close')" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">&times;</button>
       </div>
 
       <div class="space-y-2">
-        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">AI Teacher Voice</p>
+        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">AI Teacher Voice</p>
         <div v-if="settings.voices.length" class="space-y-2">
           <label
             v-for="v in settings.voices"
             :key="v.id"
             class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition"
             :class="selected === v.id
-              ? 'border-indigo-500 bg-indigo-50'
-              : 'border-gray-200 hover:border-indigo-300'"
+              ? 'border-indigo-500 dark:border-indigo-400 bg-indigo-50 dark:bg-indigo-900/40'
+              : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600'"
           >
             <input
               type="radio"
@@ -26,10 +26,10 @@
               v-model="selected"
               class="accent-indigo-600"
             />
-            <span class="text-sm text-gray-700">{{ v.label }}</span>
+            <span class="text-sm text-gray-700 dark:text-gray-300">{{ v.label }}</span>
           </label>
         </div>
-        <p v-else class="text-sm text-gray-400">Loading voices…</p>
+        <p v-else class="text-sm text-gray-400 dark:text-gray-500">Loading voices…</p>
       </div>
 
       <button
