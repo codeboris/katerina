@@ -8,17 +8,29 @@
       <span>{{ playing ? '⏸' : '▶️' }}</span>
     </button>
     <span class="text-sm text-gray-500">{{ playing ? 'Playing response…' : 'Play AI response' }}</span>
-    <audio ref="audioEl" :src="src" @ended="playing = false" />
+    <audio ref="audioEl" :src="src" @ended="playing = false" @canplaythrough="onCanPlay" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
-defineProps({ src: { type: String, required: true } })
+const props = defineProps({
+  src:      { type: String,  required: true },
+  autoplay: { type: Boolean, default: false },
+})
 
 const audioEl = ref(null)
 const playing  = ref(false)
+let   autoPlayed = false
+
+function onCanPlay() {
+  if (props.autoplay && !autoPlayed) {
+    autoPlayed = true
+    audioEl.value.play()
+    playing.value = true
+  }
+}
 
 function toggle() {
   if (playing.value) {

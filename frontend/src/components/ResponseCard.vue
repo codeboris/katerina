@@ -8,20 +8,17 @@
     <div class="border-t pt-4">
       <p class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Corrected English</p>
       <p class="text-gray-800 font-medium">{{ result.corrected }}</p>
-    </div>
-
-    <div class="border-t pt-4">
-      <p class="text-xs font-semibold text-blue-500 uppercase tracking-wide mb-1">Russian Translation</p>
-      <p class="text-gray-700">{{ result.translation }}</p>
+      <p v-if="result.translation" class="text-sm text-gray-500 mt-1">{{ result.translation }}</p>
     </div>
 
     <div class="border-t pt-4">
       <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">AI Teacher Response</p>
       <p class="text-gray-800">{{ result.answer }}</p>
+      <p v-if="result.answer_translation" class="text-sm text-gray-500 mt-1">{{ result.answer_translation }}</p>
     </div>
 
     <div v-if="result.audio_url" class="border-t pt-4">
-      <AudioPlayer :src="result.audio_url" />
+      <AudioPlayer :src="result.audio_url" :autoplay="true" />
     </div>
   </div>
 </template>

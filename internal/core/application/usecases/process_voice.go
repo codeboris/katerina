@@ -22,11 +22,12 @@ type ProcessVoiceInput struct {
 }
 
 type ProcessVoiceOutput struct {
-	Original    string `json:"original"`
-	Corrected   string `json:"corrected"`
-	Translation string `json:"translation"`
-	Answer      string `json:"answer"`
-	AudioURL    string `json:"audio_url"`
+	Original          string `json:"original"`
+	Corrected         string `json:"corrected"`
+	Translation       string `json:"translation"`
+	Answer            string `json:"answer"`
+	AnswerTranslation string `json:"answer_translation"`
+	AudioURL          string `json:"audio_url"`
 }
 
 type ProcessVoiceUseCase struct {
@@ -125,10 +126,11 @@ func (uc *ProcessVoiceUseCase) Execute(ctx context.Context, input ProcessVoiceIn
 	}
 
 	return &ProcessVoiceOutput{
-		Original:    original,
-		Corrected:   llmResp.Corrected,
-		Translation: llmResp.Translation,
-		Answer:      llmResp.Answer,
-		AudioURL:    audioURL,
+		Original:          original,
+		Corrected:         llmResp.Corrected,
+		Translation:       llmResp.Translation,
+		Answer:            llmResp.Answer,
+		AnswerTranslation: llmResp.AnswerTranslation,
+		AudioURL:          audioURL,
 	}, nil
 }
