@@ -28,9 +28,9 @@
     </button>
 
     <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">
-      <span v-if="voice.isRecording">Recording… click to stop</span>
-      <span v-else-if="voice.isProcessing">Processing with AI…</span>
-      <span v-else>Click to speak in English</span>
+      <span v-if="voice.isRecording">{{ $t('mic.status.recording') }}</span>
+      <span v-else-if="voice.isProcessing">{{ $t('mic.status.processing') }}</span>
+      <span v-else>{{ $t('mic.status.idle') }}</span>
     </p>
   </div>
 </template>

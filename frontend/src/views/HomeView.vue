@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
     <nav class="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 flex justify-between items-center">
-      <h1 class="text-lg sm:text-xl font-bold text-indigo-700 dark:text-indigo-400">Katerina · English Club</h1>
+      <h1 class="text-lg sm:text-xl font-bold text-indigo-700 dark:text-indigo-400">{{ $t('nav.title') }}</h1>
       <div class="flex items-center gap-3 sm:gap-4">
         <!-- Theme toggle -->
         <button
           @click="toggleTheme()"
           class="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-          :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          :title="isDark ? $t('nav.theme.switchToLight') : $t('nav.theme.switchToDark')"
         >
           <!-- Sun icon (shown in dark mode) -->
           <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
@@ -29,11 +29,19 @@
           </svg>
         </button>
 
+        <!-- Locale toggle -->
+        <button
+          @click="toggleLocale()"
+          class="text-sm font-medium text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+        >
+          {{ locale === 'en' ? 'RU' : 'EN' }}
+        </button>
+
         <!-- Settings gear -->
         <button
           @click="showSettings = true"
           class="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-          title="Settings"
+          :title="$t('nav.settings')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -54,7 +62,7 @@
           @click="handleLogout"
           class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
         >
-          Logout
+          {{ $t('nav.logout') }}
         </button>
       </div>
     </nav>
@@ -75,6 +83,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useVoiceStore } from '../stores/voice'
 import { useTheme } from '../composables/useTheme'
+import { useLocale } from '../composables/useLocale'
 import MicButton from '../components/MicButton.vue'
 import ResponseCard from '../components/ResponseCard.vue'
 import SettingsModal from '../components/SettingsModal.vue'
@@ -83,6 +92,7 @@ const router      = useRouter()
 const auth        = useAuthStore()
 const voice       = useVoiceStore()
 const { isDark, toggleTheme } = useTheme()
+const { locale, toggleLocale } = useLocale()
 const showSettings = ref(false)
 
 function handleLogout() {

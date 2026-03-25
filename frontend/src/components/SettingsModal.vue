@@ -5,12 +5,12 @@
   >
     <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-sm sm:mx-4 p-6 space-y-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Settings</h2>
+        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">{{ $t('settings.title') }}</h2>
         <button @click="$emit('close')" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">&times;</button>
       </div>
 
       <div class="space-y-2">
-        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">AI Teacher Voice</p>
+        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ $t('settings.voice.sectionLabel') }}</p>
         <div v-if="settings.voices.length" class="space-y-2">
           <label
             v-for="v in settings.voices"
@@ -29,7 +29,7 @@
             <span class="text-sm text-gray-700 dark:text-gray-300">{{ v.label }}</span>
           </label>
         </div>
-        <p v-else class="text-sm text-gray-400 dark:text-gray-500">Loading voices…</p>
+        <p v-else class="text-sm text-gray-400 dark:text-gray-500">{{ $t('settings.voice.loading') }}</p>
       </div>
 
       <button
@@ -38,7 +38,7 @@
         class="w-full py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium
                hover:bg-indigo-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {{ settings.loading ? 'Saving…' : 'Save' }}
+        {{ settings.loading ? $t('settings.save.loading') : $t('settings.save.idle') }}
       </button>
     </div>
   </div>

@@ -3,7 +3,7 @@
     <button
       @click="toggle"
       class="w-10 h-10 rounded-full flex items-center justify-center transition text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/60 hover:bg-indigo-200 dark:hover:bg-indigo-800/60"
-      :title="playing ? 'Pause' : 'Play'"
+      :title="playing ? $t('audio.button.pause') : $t('audio.button.play')"
     >
       <!-- Pause icon -->
       <svg v-if="playing" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -15,7 +15,7 @@
         <polygon points="5,3 19,12 5,21"/>
       </svg>
     </button>
-    <span class="text-sm text-gray-500 dark:text-gray-400">{{ playing ? 'Playing response…' : 'Play AI response' }}</span>
+    <span class="text-sm text-gray-500 dark:text-gray-400">{{ playing ? $t('audio.status.playing') : $t('audio.status.idle') }}</span>
     <audio ref="audioEl" :src="src" @ended="playing = false" @canplaythrough="onCanPlay" />
   </div>
 </template>

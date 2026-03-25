@@ -2,12 +2,12 @@
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800
               flex items-center justify-center px-4">
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
-      <h1 class="text-3xl font-bold text-center text-indigo-700 dark:text-indigo-400 mb-1">Katerina</h1>
-      <p class="text-center text-gray-500 dark:text-gray-400 mb-8 text-sm">English Club · AI Teacher</p>
+      <h1 class="text-3xl font-bold text-center text-indigo-700 dark:text-indigo-400 mb-1">{{ $t('login.title') }}</h1>
+      <p class="text-center text-gray-500 dark:text-gray-400 mb-8 text-sm">{{ $t('login.subtitle') }}</p>
 
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ $t('login.email.label') }}</label>
           <input
             v-model="email"
             type="email"
@@ -17,7 +17,7 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ $t('login.password.label') }}</label>
           <input
             v-model="password"
             type="password"
@@ -34,7 +34,7 @@
           :disabled="loading"
           class="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
         >
-          {{ loading ? 'Signing in…' : 'Sign in' }}
+          {{ loading ? $t('login.submit.loading') : $t('login.submit.idle') }}
         </button>
       </form>
     </div>
@@ -44,10 +44,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 
 const router  = useRouter()
 const auth    = useAuthStore()
+const { t }   = useI18n()
 const email   = ref('demo@katerina.local')
 const password = ref('password123')
 const errorMsg = ref('')
@@ -60,7 +62,7 @@ async function handleLogin() {
     await auth.login(email.value, password.value)
     router.push('/')
   } catch (e) {
-    errorMsg.value = e.response?.data?.error || 'Login failed'
+    errorMsg.value = e.response?.data?.error || t('login.error.fallback')
   } finally {
     loading.value = false
   }
