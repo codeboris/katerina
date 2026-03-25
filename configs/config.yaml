@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+db:
+  host: postgres
+  port: 5432
+  name: katerina
+  user: katerina
+  password: katerina
+
+redis:
+  host: redis
+  port: 6379
+
+jwt:
+  secret: "katerina-jwt-secret-change-in-production"
+  access_ttl: 15m
+  refresh_ttl: 168h
+
+ai:
+  stt_url: "http://whisper:8001"
+  llm_url: "http://ollama:11434"
+  tts_url: "http://tts:8002"
+  llm_model: "llama3"
+
+storage:
+  audio_path: "/app/audio"

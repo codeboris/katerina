@@ -1,0 +1,137 @@
+name: katerina
+
+networks:
+  katerina:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_models:
+  audio_storage:
+
+services:
+
+  # ── Frontend ─────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Backend ──────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      CONFIG_PATH: configs/config.yaml
+    volumes:
+      - audio_storage:/app/audio
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Postgres ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB:       katerina
+      POSTGRES_USER:     katerina
+      POSTGRES_PASSWORD: katerina
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U katerina"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Redis ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Ollama (LLM) ─────────────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Whisper (STT) ────────────────────────────────────────────────────────
+  whisper:
+    build:
+      context: ./services/whisper
+      dockerfile: Dockerfile
+    environment:
+      WHISPER_MODEL: base
+      DEVICE:        cpu
+      COMPUTE_TYPE:  int8
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - katerina
+    restart: unless-stopped
+
+  # ── Piper (TTS) ──────────────────────────────────────────────────────────
+  tts:
+    build:
+      context: ./services/tts
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8002/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - katerina
+    restart: unless-stopped

@@ -1,0 +1,119 @@
+openapi: 3.0.3
+info:
+  title: Katerina API
+  description: English Club voice AI API
+  version: 1.0.0
+
+paths:
+  /api/auth/login:
+    post:
+      summary: Login with email and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:    { type: string, example: "demo@katerina.local" }
+                password: { type: string, example: "password123" }
+      responses:
+        "200":
+          description: JWT tokens
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthResponse" }
+        "401":
+          description: Invalid credentials
+
+  /api/auth/refresh:
+    post:
+      summary: Refresh access token
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        "200":
+          description: New JWT tokens
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthResponse" }
+        "401":
+          description: Invalid or expired refresh token
+
+  /api/voice/process:
+    post:
+      summary: Process voice input (STT → LLM → TTS)
+      tags: [Voice]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [audio]
+              properties:
+                audio:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Processed result with text and audio URL
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VoiceResponse" }
+        "401":
+          description: Unauthorized
+
+  /api/audio/{id}:
+    get:
+      summary: Stream synthesised audio file
+      tags: [Audio]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: WAV audio file
+          content:
+            audio/wav: {}
+        "404":
+          description: Audio not found
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        access_token:  { type: string }
+        refresh_token: { type: string }
+
+    VoiceResponse:
+      type: object
+      properties:
+        original:    { type: string, description: "Raw transcribed text" }
+        corrected:   { type: string, description: "Grammar-corrected English" }
+        translation: { type: string, description: "Russian translation" }
+        answer:      { type: string, description: "AI teacher response" }
+        audio_url:   { type: string, description: "Path to synthesised audio" }
